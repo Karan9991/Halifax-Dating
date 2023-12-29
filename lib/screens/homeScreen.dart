@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:swipe_cards/swipe_cards.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -12,7 +13,7 @@ class HomeScreen extends StatelessWidget {
       body: Stack(
         children: [
           CardSwiper(),
-          buildButtons(),
+          //buildButtons(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -22,26 +23,6 @@ class HomeScreen extends StatelessWidget {
           BottomNavigationBarItem(
               icon: Icon(Icons.chat), label: 'Conversations'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-      ),
-    );
-  }
-
-  Widget buildButtons() {
-    return Positioned(
-      top: 0,
-      bottom: 0,
-      right: 0,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(height: 20),
-          IconButton(
-            icon: Icon(Icons.thumb_up),
-            onPressed: () {
-              // Handle like button press
-            },
-          ),
         ],
       ),
     );
@@ -56,39 +37,140 @@ class CardSwiper extends StatefulWidget {
 class _CardSwiperState extends State<CardSwiper> {
   List<DocumentSnapshot> users = [];
   int currentIndex = 0;
+  late MatchEngine _matchEngine;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    // _matchEngine = MatchEngine(swipeItems: _buildSwipeItems(users));
+    super.initState();
+    _matchEngine = MatchEngine(swipeItems: _buildSwipeItems(users));
+  }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('users').snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
+    return Stack(
+      children: [
+        StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('users').snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
 
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
-        }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator();
+            }
 
-        users = snapshot.data!.docs;
-        return SwipeCards(
-          matchEngine: MatchEngine(swipeItems: _buildSwipeItems(users)),
-          onStackFinished: () {
-            // Handle stack finished
+            users = snapshot.data!.docs;
+
+            return SwipeCards(
+              matchEngine: _matchEngine,
+              onStackFinished: () {
+                // Handle stack finished
+              },
+              itemBuilder: (context, index) => UserCard(users[index]),
+              likeTag: Icon(Icons.favorite, color: Colors.blue, size: 50),
+              nopeTag: Icon(Icons.close, color: Colors.blue, size: 50),
+              superLikeTag: Icon(Icons.star, color: Colors.blue, size: 50),
+              fillSpace: true,
+              upSwipeAllowed: true,
+              leftSwipeAllowed: true,
+              rightSwipeAllowed: true,
+              itemChanged: (item, index) {
+                // Handle item changed
+              },
+            );
           },
-          itemBuilder: (context, index) => UserCard(users[index]),
-          likeTag: Icon(Icons.favorite, color: Colors.blue, size: 50),
-          nopeTag: Icon(Icons.close, color: Colors.blue, size: 50),
-          superLikeTag: Icon(Icons.star, color: Colors.blue, size: 50),
-          fillSpace: true,
-          upSwipeAllowed: true,
-          leftSwipeAllowed: true,
-          rightSwipeAllowed: true,
-          itemChanged: (item, index) {
-            // Handle item changed
-          },
-        );
-      },
+        ),
+        buildButtons(),
+      ],
+    );
+  }
+
+  Widget buildButtons() {
+    return Stack(
+      children: [
+        _buildButton(
+            icon: Icons.message,
+            onPressed: () {
+              MatchEngine(swipeItems: _buildSwipeItems(users))
+                  .currentItem
+                  ?.like();
+              // Handle message button press
+            },
+            top: 380,
+            right: 5,
+            color: Colors.orange),
+        _buildButton(
+            icon: Icons.favorite,
+            onPressed: () {
+              // Handle favorite button press
+            },
+            top: 450,
+            right: 35,
+            color: Colors.green),
+        _buildButton(
+            icon: Icons.star,
+            onPressed: () {
+              // Handle star button press
+            },
+            top: 510,
+            right: 85,
+            color: Colors.blue),
+        _buildButton(
+            icon: Icons.close,
+            onPressed: () {
+              // Handle close button press
+            },
+            top: 550,
+            right: 150,
+            color: Colors.red),
+        _buildButton(
+            icon: Icons.replay,
+            onPressed: () {
+              // Handle close button press
+            },
+            top: 580,
+            right: 217,
+            color: Colors.yellow),
+      ],
+    );
+  }
+
+  Widget _buildButton({
+    required IconData icon,
+    required VoidCallback onPressed,
+    required double top,
+    required double right,
+    required Color color,
+  }) {
+    return Positioned(
+      top: top,
+      right: right,
+      child: InkWell(
+        onTap: onPressed,
+        child: Container(
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                spreadRadius: 2,
+                blurRadius: 5,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Icon(
+            icon,
+            size: 30,
+            color: color, // Customize the button color
+          ),
+        ),
+      ),
     );
   }
 
@@ -118,81 +200,36 @@ class UserCard extends StatelessWidget {
 
   UserCard(this.user);
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: EdgeInsets.all(15.0),
-//       child: Stack(
-//         children: [
-//           ClipRRect(
-//             borderRadius: BorderRadius.only(
-//               topLeft: Radius.circular(150.0), // Adjust the value as needed
-//               bottomRight: Radius.circular(400.0), // Adjust the value as needed
-//             ),
-//             child: Image.network(
-//               user['photoUrl'],
-//               height: 600,
-//               width: double.infinity,
-//               fit: BoxFit.cover,
-//             ),
-//           ),
-//           Padding(
-//             padding: const EdgeInsets.all(8.0),
-//             child: Text(
-//               user['name'],
-//               style: TextStyle(fontSize: 20),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Padding(
-          padding: EdgeInsets.all(15.0),
-          child: Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(150.0), // Adjust the value as needed
-                  bottomRight:
-                      Radius.circular(400.0), // Adjust the value as needed
-                ),
-                child: Image.network(
-                  user['photoUrl'],
-                  height: 600,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  user['name'],
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
-            ],
+    return Padding(
+      padding: EdgeInsets.all(15.0),
+      child: Stack(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(150.0), // Adjust the value as needed
+              bottomRight: Radius.circular(300.0), // Adjust the value as needed
+            ),
+            child: Image.network(
+              user['photoUrl'],
+              height: 600,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        // Positioned(
-        //   key: ValueKey(user['name']), // Unique key for each card
-
-        //   top: 300,
-        //   bottom: 0,
-        //   right: 0,
-        //   child: IconButton(
-        //     icon: Icon(Icons.thumb_up),
-        //     onPressed: () {
-        //       // Handle like button press
-        //     },
-        //   ),
-        // ),
-      ],
+          Positioned(
+            top: 8, // Adjust the top value to position the text vertically
+            right:
+                8, // Adjust the right value to position the text horizontally
+            child: Text(
+              user['name'],
+              style: GoogleFonts.leckerliOne(
+                  fontSize: 20, color: Colors.redAccent),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
