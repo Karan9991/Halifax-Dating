@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:halifax_dating/utils/constants.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:slider_button/slider_button.dart';
 
@@ -33,17 +35,66 @@ class _SignUpScreenState extends State<SignUpScreen> {
     try {
       final userCredential = await FirebaseAuth.instance.signInAnonymously();
 
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userCredential.user!.uid)
-          .set({
-        'name': _nameController.text,
-        'photoUrl': _image != null ? _image!.path : null,
-      });
+      String uid = userCredential.user!.uid;
 
-      print('user signedup with uid : ${userCredential.user!.uid}');
+      if (_image != null) {
+        Reference storageRef = FirebaseStorage.instance
+            .ref()
+            .child('profile_images')
+            .child('$uid.jpg');
+
+        await storageRef.putFile(File(_image!.path));
+
+        // Get download URL
+        String imageUrl = await storageRef.getDownloadURL();
+        await FirebaseFirestore.instance.collection('users').doc(uid).set({
+          'name': _nameController.text,
+          'photoUrl': imageUrl,
+        });
+
+        print('user signedup with uid : ${userCredential.user!.uid}');
+      } else {
+        print('image path null');
+      }
     } catch (e) {
       print('Error signing up : $e');
+    }
+  }
+
+  Future<void> signUp() async {
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInAnonymously();
+
+      String uid = userCredential.user!.uid;
+
+      // Upload image to Firebase Storage
+      if (_image != null) {
+        Reference storageRef = FirebaseStorage.instance
+            .ref()
+            .child('profile_images')
+            .child('$uid.jpg');
+
+        await storageRef.putFile(File(_image!.path));
+
+        // Get download URL
+        String imageUrl = await storageRef.getDownloadURL();
+
+        // Store user data in Firestore
+        await FirebaseFirestore.instance.collection('users').doc(uid).set({
+          'name': _nameController.text,
+          'photoUrl': imageUrl,
+        });
+      } else {
+        // If no image, store user data in Firestore without photoUrl
+        await FirebaseFirestore.instance.collection('users').doc(uid).set({
+          'name': _nameController.text,
+        });
+      }
+
+      print('User signed up successfully with UID: $uid');
+    } catch (e) {
+      print('Error signing up: $e');
     }
   }
 
@@ -56,7 +107,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -79,16 +130,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     child: Column(
                       children: [
                         Text(
-                          'Welcome to Halifax Dating',
+                          AppConstants.ONBOARDING_TITLE1,
                           style: GoogleFonts.leckerliOne(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
-                          'Let\'s set you up!',
+                          AppConstants.SIGNUP_DESCRIPTION,
                           style: GoogleFonts.leckerliOne(
                             fontSize: 16,
                             color: Colors.white,
@@ -100,7 +151,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   Stack(
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(left: 40.0),
+                        padding: const EdgeInsets.only(left: 40.0),
                         child: Container(
                           width: 150,
                           height: 150,
@@ -114,7 +165,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.2),
                                 blurRadius: 10.0,
-                                offset: Offset(0, 5),
+                                offset: const Offset(0, 5),
                               ),
                             ],
                             image: _image != null
@@ -128,12 +179,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ? Container(
                                   width: 70,
                                   height: 70,
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: Colors
                                         .red, // Set your desired background color
                                   ),
-                                  child: Center(
+                                  child: const Center(
                                     child: Icon(
                                       Icons.person,
                                       color: Colors.white,
@@ -149,7 +200,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         right: 5,
                         child: IconButton(
                           onPressed: getImage,
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.camera_alt,
                             color: Colors.white,
                           ),
@@ -165,14 +216,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         left: 20.0, top: 20, right: 20, bottom: 20),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                           topRight: Radius.circular(150),
                           bottomLeft: Radius.circular(150)),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.2),
                           blurRadius: 10.0,
-                          offset: Offset(0, 5),
+                          offset: const Offset(0, 5),
                         ),
                       ],
                     ),
@@ -188,14 +239,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               controller: _nameController,
                               decoration: InputDecoration(
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.red),
+                                  borderSide:
+                                      const BorderSide(color: Colors.red),
                                   borderRadius: BorderRadius.circular(12.0),
                                 ),
                                 labelText: 'Name',
                                 labelStyle:
                                     GoogleFonts.leckerliOne(color: Colors.red),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.red),
+                                  borderSide:
+                                      const BorderSide(color: Colors.red),
                                   borderRadius: BorderRadius.circular(12.0),
                                 ),
                               ),
@@ -215,17 +268,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   baseColor: Colors.white,
                                   buttonColor: Colors.red,
                                   backgroundColor:
-                                      Color.fromARGB(255, 254, 207, 195),
+                                      const Color.fromARGB(255, 254, 207, 195),
                                   highlightedColor:
-                                      Color.fromARGB(255, 255, 166, 156),
-                                  action: () {},
+                                      const Color.fromARGB(255, 255, 166, 156),
+                                  action: () {
+                                    _signUp();
+                                  },
                                   label: Text(
-                                    "Slide to Get In",
+                                    AppConstants.SLIDE_TO_GET_IN,
                                     style: GoogleFonts.leckerliOne(
                                         fontWeight: FontWeight.w500,
                                         fontSize: 17),
                                   ),
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.arrow_forward,
                                     color: Colors.white,
                                   ))),

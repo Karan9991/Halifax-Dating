@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:halifax_dating/firebase_options.dart';
-import 'package:halifax_dating/screens/onBoarding.dart';
+import 'package:halifax_dating/screens/homeScreen.dart';
 import 'package:halifax_dating/screens/signUp.dart';
 
 void main() async {
@@ -20,6 +20,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
+      // initialRoute: '/',
+      // routes: {
+      //   '/': (context) => OnboardingScreen(),
+      //   '/signup': (context) => const SignUpScreen(),
+      // },
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -39,9 +44,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      // home: const SignUpScreen(),
-
-      home: OnboardingScreen(),
+        home: HomeScreen(),
+      //home: const SignUpScreen(),
     );
   }
 }
