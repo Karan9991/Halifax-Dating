@@ -42,8 +42,16 @@ class _CardSwiperState extends State<CardSwiper> {
   @override
   void initState() {
     // TODO: implement initState
-    // _matchEngine = MatchEngine(swipeItems: _buildSwipeItems(users));
     super.initState();
+    print('init called');
+    initialize();
+  }
+
+  Future<void> initialize() async {
+    await call();
+  }
+
+  Future<void> call() async {
     _matchEngine = MatchEngine(swipeItems: _buildSwipeItems(users));
   }
 
@@ -63,6 +71,8 @@ class _CardSwiperState extends State<CardSwiper> {
             }
 
             users = snapshot.data!.docs;
+            // Update the _matchEngine when the underlying data changes
+            _matchEngine = MatchEngine(swipeItems: _buildSwipeItems(users));
 
             return SwipeCards(
               matchEngine: _matchEngine,
@@ -94,9 +104,6 @@ class _CardSwiperState extends State<CardSwiper> {
         _buildButton(
             icon: Icons.message,
             onPressed: () {
-              MatchEngine(swipeItems: _buildSwipeItems(users))
-                  .currentItem
-                  ?.like();
               // Handle message button press
             },
             top: 380,
@@ -105,6 +112,7 @@ class _CardSwiperState extends State<CardSwiper> {
         _buildButton(
             icon: Icons.favorite,
             onPressed: () {
+              _matchEngine.currentItem?.like();
               // Handle favorite button press
             },
             top: 450,
@@ -113,6 +121,7 @@ class _CardSwiperState extends State<CardSwiper> {
         _buildButton(
             icon: Icons.star,
             onPressed: () {
+              _matchEngine.currentItem?.superLike();
               // Handle star button press
             },
             top: 510,
@@ -122,6 +131,7 @@ class _CardSwiperState extends State<CardSwiper> {
             icon: Icons.close,
             onPressed: () {
               // Handle close button press
+              _matchEngine.currentItem?.nope();
             },
             top: 550,
             right: 150,
@@ -130,6 +140,7 @@ class _CardSwiperState extends State<CardSwiper> {
             icon: Icons.replay,
             onPressed: () {
               // Handle close button press
+              _matchEngine.rewindMatch();
             },
             top: 580,
             right: 217,
@@ -208,9 +219,11 @@ class UserCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(150.0), // Adjust the value as needed
-              bottomRight: Radius.circular(300.0), // Adjust the value as needed
-            ),
+                topRight: Radius.circular(20.0),
+                topLeft: Radius.circular(150.0), // Adjust the value as needed
+                bottomRight:
+                    Radius.circular(300.0), // Adjust the value as needed
+                bottomLeft: Radius.circular(50.0)),
             child: Image.network(
               user['photoUrl'],
               height: 600,
