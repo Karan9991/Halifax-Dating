@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:halifax_dating/utils/constants.dart';
 import 'package:swipe_cards/swipe_cards.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -8,26 +10,134 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dating App'),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            height: 30, // Set your desired height
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/z.png'),
+                fit: BoxFit.cover,
+              ),
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(1.0),
+                bottomLeft: Radius.circular(1.0),
+              ),
+              //  borderRadius: BorderRadius.circular(20.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 10.0,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        backgroundColor: Colors.transparent,
+        elevation: 0, // Remove the default shadow
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.redAccent, Colors.pinkAccent],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(20.0),
+              bottomRight: Radius.circular(20.0),
+            ),
+          ),
+        ),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              AppConstants.APP_TITLE,
+              style: GoogleFonts.leckerliOne(
+                color: Colors.white,
+                fontSize: 25,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: IconButton(
+                icon: Icon(Icons.notifications),
+                onPressed: () {
+                  // Handle notification icon press
+                },
+                color: Colors.white,
+              ),
+            ),
+          ],
+        ),
       ),
-      body: Stack(
-        children: [
-          CardSwiper(),
-          //buildButtons(),
-        ],
+   
+      body: Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color.fromARGB(255, 253, 129, 205),
+                // Color.fromARGB(255, 255, 199, 199)
+                Color.fromRGBO(252, 229, 255, 1)
+              ],
+            ),
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(20.0),
+                topLeft: Radius.circular(165.0),
+                bottomLeft: Radius.circular(80.0),
+                bottomRight: Radius.circular(280.0)),
+          ),
+          child: Stack(
+            children: [
+              CardSwiper(),
+            ],
+          ),
+        ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Discover'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Matches'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.chat), label: 'Conversations'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+      bottomNavigationBar: CurvedNavigationBar(
+        backgroundColor: Colors.redAccent,
+        buttonBackgroundColor: Colors.white,
+        color: Color.fromRGBO(252, 229, 255, 1),
+        height: 65,
+        items: const <Widget>[
+          Icon(
+            Icons.explore,
+            size: 35,
+            color: Colors.redAccent,
+          ),
+          Icon(
+            Icons.favorite,
+            size: 35,
+            color: Colors.redAccent,
+          ),
+          Icon(
+            Icons.chat,
+            size: 35,
+            color: Colors.redAccent,
+          ),
+          Icon(
+            Icons.person,
+            size: 35,
+            color: Colors.redAccent,
+          )
         ],
+        onTap: (index) {
+          // _pageController.animateToPage(index,
+          //     duration: const Duration(milliseconds: 300),
+          //     curve: Curves.easeOut);
+        },
       ),
     );
   }
 }
+
+
 
 class CardSwiper extends StatefulWidget {
   @override
