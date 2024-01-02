@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:halifax_dating/firebase_options.dart';
 import 'package:halifax_dating/screens/homeScreen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,10 +41,13 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.redAccent, primary: Colors.redAccent),
         useMaterial3: true,
-      ),
-      home: HomeScreen(),
+ textTheme: GoogleFonts.leckerliOneTextTheme(
+          Theme.of(context).textTheme,
+        ),      ),
+      home: const HomeScreen(),
       //   home: const SignUpScreen(),
       //home: OnboardingScreen(),
     );

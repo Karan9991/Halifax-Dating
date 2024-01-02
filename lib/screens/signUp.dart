@@ -179,10 +179,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ? Container(
                                   width: 70,
                                   height: 70,
-                                  decoration: const BoxDecoration(
+                                  decoration:  BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: Colors
-                                        .red, // Set your desired background color
+                                    color: Theme.of(context).primaryColor, // Set your desired background color
                                   ),
                                   child: const Center(
                                     child: Icon(
@@ -235,24 +234,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: TextField(
-                              cursorColor: Colors.red,
+                              cursorColor: Theme.of(context).primaryColor,
                               controller: _nameController,
                               decoration: InputDecoration(
                                 focusedBorder: OutlineInputBorder(
                                   borderSide:
-                                      const BorderSide(color: Colors.red),
+                                       BorderSide(color: Theme.of(context).primaryColor),
                                   borderRadius: BorderRadius.circular(12.0),
                                 ),
                                 labelText: 'Name',
                                 labelStyle:
-                                    GoogleFonts.leckerliOne(color: Colors.red),
+                                    GoogleFonts.leckerliOne(color: Theme.of(context).primaryColor),
                                 enabledBorder: OutlineInputBorder(
                                   borderSide:
-                                      const BorderSide(color: Colors.red),
+                                       BorderSide(color: Theme.of(context).primaryColor),
                                   borderRadius: BorderRadius.circular(12.0),
                                 ),
                               ),
-                              style: GoogleFonts.leckerliOne(color: Colors.red),
+                              style: GoogleFonts.leckerliOne(color: Theme.of(context).primaryColor),
                             ),
                           ),
                         ),
@@ -266,7 +265,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               child: SliderButton(
                                   width: 240.0,
                                   baseColor: Colors.white,
-                                  buttonColor: Colors.red,
+                                  buttonColor: Theme.of(context).primaryColor,
                                   backgroundColor:
                                       const Color.fromARGB(255, 254, 207, 195),
                                   highlightedColor:
