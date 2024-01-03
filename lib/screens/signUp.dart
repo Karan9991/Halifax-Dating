@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:halifax_dating/utils/constants.dart';
+import 'package:halifax_dating/utils/shared_pref.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:slider_button/slider_button.dart';
 
@@ -30,6 +31,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       }
     });
   }
+
+ 
 
   Future<void> _signUp() async {
     try {
@@ -179,9 +182,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ? Container(
                                   width: 70,
                                   height: 70,
-                                  decoration:  BoxDecoration(
+                                  decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: Theme.of(context).primaryColor, // Set your desired background color
+                                    color: Theme.of(context)
+                                        .primaryColor, // Set your desired background color
                                   ),
                                   child: const Center(
                                     child: Icon(
@@ -238,20 +242,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               controller: _nameController,
                               decoration: InputDecoration(
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide:
-                                       BorderSide(color: Theme.of(context).primaryColor),
+                                  borderSide: BorderSide(
+                                      color: Theme.of(context).primaryColor),
                                   borderRadius: BorderRadius.circular(12.0),
                                 ),
                                 labelText: 'Name',
-                                labelStyle:
-                                    GoogleFonts.leckerliOne(color: Theme.of(context).primaryColor),
+                                labelStyle: GoogleFonts.leckerliOne(
+                                    color: Theme.of(context).primaryColor),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide:
-                                       BorderSide(color: Theme.of(context).primaryColor),
+                                  borderSide: BorderSide(
+                                      color: Theme.of(context).primaryColor),
                                   borderRadius: BorderRadius.circular(12.0),
                                 ),
                               ),
-                              style: GoogleFonts.leckerliOne(color: Theme.of(context).primaryColor),
+                              style: GoogleFonts.leckerliOne(
+                                  color: Theme.of(context).primaryColor),
                             ),
                           ),
                         ),

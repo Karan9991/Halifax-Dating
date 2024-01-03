@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:halifax_dating/model/onBoarding_data.dart';
 import 'package:halifax_dating/utils/constants.dart';
+import 'package:halifax_dating/utils/shared_pref.dart';
 
 class OnboardingScreen extends StatefulWidget {
   @override
@@ -10,6 +12,9 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   // Assuming you have a list of onboarding data
+
+  int currentIndex = 0;
+
   List<OnboardingData> onboardingData = [
     OnboardingData(
       image: AppConstants.ONBOARDING_IMAGE1,
@@ -28,7 +33,38 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     ),
   ];
 
-  int currentIndex = 0;
+  @override
+  void initState() {
+    super.initState();
+    checkOnboardingStatus();
+  }
+
+  Future<void> checkOnboardingStatus() async {
+    await SharedPrefs.init();
+    debugPrint("aaaaa ${SharedPrefs.getBool('isAppInstalled')}");
+
+    bool isAppInstalled = SharedPrefs.getBool('isAppInstalled') ?? false;
+
+    debugPrint("aaaaa $isAppInstalled");
+
+    if (isAppInstalled) {
+      if (isUserSignedIn()) {
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        Navigator.pushReplacementNamed(context, '/signup');
+      }
+    }
+  }
+
+  Future<void> setOnboardingStatus() async {
+    await SharedPrefs.setBool('isAppInstalled', true);
+    debugPrint("bbbbb ${SharedPrefs.getBool('isAppInstalled')}");
+  }
+
+  bool isUserSignedIn() {
+    User? user = FirebaseAuth.instance.currentUser;
+    return user != null && user.isAnonymous;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -147,11 +183,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             if (currentIndex < onboardingData.length - 1) {
                               currentIndex++;
                             } else {
-                              // Navigate to the next screen or perform any action
-                              // Navigator.push(
-                              //     context,
-                              //     MaterialPageRoute(
-                              //         builder: (context) => const SignUpScreen()));
+                              setOnboardingStatus();
 
                               Navigator.pushNamed(context, '/signup');
                             }
