@@ -2,6 +2,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:halifax_dating/screens/discoverScreen.dart';
+import 'package:halifax_dating/screens/profile.dart';
 import 'package:halifax_dating/utils/constants.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -117,9 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Center(
             child: Text('Second Page'),
           ),
-          Center(
-            child: Text('Third Page'),
-          ),
+          Profile()
         ],
       ),
       bottomNavigationBar: CurvedNavigationBar(

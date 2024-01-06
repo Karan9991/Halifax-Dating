@@ -6,7 +6,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:halifax_dating/utils/constants.dart';
-import 'package:halifax_dating/utils/shared_pref.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:slider_button/slider_button.dart';
 
@@ -31,8 +30,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       }
     });
   }
-
- 
 
   Future<void> _signUp() async {
     try {
@@ -61,43 +58,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       }
     } catch (e) {
       print('Error signing up : $e');
-    }
-  }
-
-  Future<void> signUp() async {
-    try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInAnonymously();
-
-      String uid = userCredential.user!.uid;
-
-      // Upload image to Firebase Storage
-      if (_image != null) {
-        Reference storageRef = FirebaseStorage.instance
-            .ref()
-            .child('profile_images')
-            .child('$uid.jpg');
-
-        await storageRef.putFile(File(_image!.path));
-
-        // Get download URL
-        String imageUrl = await storageRef.getDownloadURL();
-
-        // Store user data in Firestore
-        await FirebaseFirestore.instance.collection('users').doc(uid).set({
-          'name': _nameController.text,
-          'photoUrl': imageUrl,
-        });
-      } else {
-        // If no image, store user data in Firestore without photoUrl
-        await FirebaseFirestore.instance.collection('users').doc(uid).set({
-          'name': _nameController.text,
-        });
-      }
-
-      print('User signed up successfully with UID: $uid');
-    } catch (e) {
-      print('Error signing up: $e');
     }
   }
 

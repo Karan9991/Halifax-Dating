@@ -2,9 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:halifax_dating/firebase_options.dart';
-import 'package:halifax_dating/screens/homeScreen.dart';
-import 'package:halifax_dating/screens/onBoarding.dart';
-import 'package:halifax_dating/screens/signUp.dart';
+import 'package:halifax_dating/screens/profile.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,12 +21,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      initialRoute: '/',
-      routes: {
-        '/': (context) => OnboardingScreen(),
-        '/signup': (context) => const SignUpScreen(),
-        '/home': (context) => const HomeScreen(),
-      },
+      // initialRoute: '/',
+      // routes: {
+      //   '/': (context) => OnboardingScreen(),
+      //   '/signup': (context) => const SignUpScreen(),
+      //   '/home': (context) => const HomeScreen(),
+      // },
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
             seedColor: Colors.redAccent, primary: Colors.redAccent),
@@ -37,7 +35,7 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
       ),
-      //home: const HomeScreen(),
+      home: const Profile(),
       //   home: const SignUpScreen(),
       //home: OnboardingScreen(),
     );
