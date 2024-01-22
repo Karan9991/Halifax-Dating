@@ -2,10 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:halifax_dating/firebase_options.dart';
-import 'package:halifax_dating/screens/demo.dart';
-//import 'package:halifax_dating/screens/edit_profile_screen.dart';
-import 'package:halifax_dating/screens/imageupload.dart';
-import 'package:halifax_dating/screens/profile.dart';
+import 'package:halifax_dating/screens/homeScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +35,7 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
       ),
-      home:  EditProfileScreen(),
+      home: HomeScreen(),
       //   home: const SignUpScreen(),
       //home: OnboardingScreen(),
     );
